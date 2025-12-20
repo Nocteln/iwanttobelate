@@ -1,10 +1,3 @@
-<!-- <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
-</template> -->
-
 <template>
   <div class="relative">
     <mgl-map :map-style="style" :center="center" :zoom="zoom" height="100vh">
@@ -30,7 +23,7 @@ const config = useRuntimeConfig();
 const style = `https://api.maptiler.com/maps/streets/style.json?key=${config.public.MapTilerApiKey}`;
 let center = ref([0, 0]);
 let markerCoordinates = ref(center);
-let zoom = ref(0);
+let zoom = ref(14);
 
 try {
   const position = await getGeolocation();
@@ -61,15 +54,11 @@ function getGeolocation() {
 }
 
 const onAddressSelected = (coords) => {
-  console.log("Coordonnées reçues :", coords); // ex: [2.35, 48.85]
+  console.log("Coordonnées reçues :", coords);
 
-  // 1. On déplace le centre de la carte
   center.value = coords;
 
-  // 2. On zoom un peu
   zoom.value = 14;
-
-  // 3. On place un marqueur
   markerCoordinates.value = coords;
 };
 </script>

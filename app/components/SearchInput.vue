@@ -38,29 +38,39 @@ watch(query, () => {
 // Quand on clique sur une proposition
 const selectAddress = (feature) => {
   query.value = feature.properties.label; // On met le nom complet dans l'input
-  results.value = []; // On vide la liste
-
-  // IMPORTANT : L'API renvoie [Longitude, Latitude]
-  // C'est exactement l'ordre qu'attend MapLibre !
+  results.value = []; 
+  
   emit("select", feature.geometry.coordinates);
 };
 
 </script>
 
 <template>
-  <div class="search-container">
-    <input
-      v-model="query"
-      type="text"
-      placeholder="Entrez une adresse..."
-      class="search-input"
-    />
+  <div class="absolute top-5 left-5 z-[1000] w-[300px]">
+    <div class="relative">
+      <input
+        v-model="query"
+        type="text"
+        placeholder="Entrez une adresse..."
+        class="w-full p-2.5 pr-10 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button 
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
+        title="Utiliser ma position"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+        </svg>
+      </button>
+    </div>
 
-    <ul v-if="results?.length > 0" class="results-list">
+    <ul v-if="results?.length > 0" class="bg-white list-none p-0 m-0 border border-gray-300 border-t-0 rounded-b shadow-lg">
       <li
         v-for="feature in results"
         :key="feature.properties.id"
         @click="selectAddress(feature)"
+        class="p-2.5 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-gray-100"
       >
         {{ feature.properties.label }}
       </li>
@@ -68,35 +78,4 @@ const selectAddress = (feature) => {
   </div>
 </template>
 
-<style scoped>
-/* Un peu de style rapide */
-.search-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000; /* Pour passer au dessus de la carte */
-  width: 300px;
-}
-.search-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-.results-list {
-  background: white;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  border: 1px solid #ccc;
-  border-top: none;
-}
-.results-list li {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-}
-.results-list li:hover {
-  background-color: #f0f0f0;
-}
-</style>
+
