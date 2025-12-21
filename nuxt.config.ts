@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    graphhopperApiKey: process.env.GRAPHHOPPER_API_KEY,
     public: {
       MapTilerApiKey: process.env.MAPTILER_API_KEY,
     },

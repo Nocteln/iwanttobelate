@@ -4,6 +4,13 @@
       <mgl-navigation-control position="top-right" />
       <mgl-marker v-if="markerCoordinates" :coordinates="markerCoordinates">
       </mgl-marker>
+      <mgl-geo-json-source
+        v-if="routeGeoJSON"
+        source-id="geojson"
+        :data="routeGeoJSON"
+      >
+        <mgl-line-layer layer-id="geojson" :layout="layout" :paint="paint" />
+      </mgl-geo-json-source>
     </mgl-map>
 
     <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 w-80">
@@ -34,6 +41,16 @@ let arrivalCoords = ref(null);
 let departureCoords = ref(null);
 
 const routeGeoJSON = ref(null);
+
+const layout = {
+  "line-join": "round",
+  "line-cap": "round",
+};
+
+const paint = {
+  "line-color": "#FF0000",
+  "line-width": 8,
+};
 
 async function onGetPosition(type) {
   try {
@@ -85,20 +102,24 @@ const onDepartureSelected = async (coords) => {
     arrivalCoords.value
   );
 
-  const { data } = await fetch("/api/route", {
-    method: "POST",
-    body: {
-      from: departureCoords.value,
-      to: arrivalCoords.value,
-      mode: "car",
-    },
-  });
+  try {
+    const data = await $fetch("/api/route", {
+      method: "POST",
+      body: {
+        start: departureCoords.value,
+        end: arrivalCoords.value,
+        mode: "car",
+      },
+    });
 
-  if (data?.value) {
-    routeGeoJSON.value = data.value;
-    console.log("Itinéraire reçu :", routeGeoJSON.value);
-  } else {
-    console.error("Erreur lors de la récupération de l'itinéraire");
+    if (data) {
+      routeGeoJSON.value = data;
+      console.log("Itinéraire reçu :", routeGeoJSON.value);
+    } else {
+      console.error("Erreur lors de la récupération de l'itinéraire");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'itinéraire:", error);
   }
 };
 
