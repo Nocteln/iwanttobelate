@@ -33,6 +33,8 @@ let zoom = ref(0);
 let arrivalCoords = ref(null);
 let departureCoords = ref(null);
 
+const routeGeoJSON = ref(null);
+
 async function onGetPosition(type) {
   try {
     const position = await getGeolocation();
@@ -69,7 +71,7 @@ function getGeolocation() {
   });
 }
 
-const onDepartureSelected = (coords) => {
+const onDepartureSelected = async (coords) => {
   console.log("Départ sélectionné :", coords);
   center.value = coords;
   zoom.value = 14;
@@ -82,6 +84,22 @@ const onDepartureSelected = (coords) => {
     "à",
     arrivalCoords.value
   );
+
+  const { data } = await fetch("/api/route", {
+    method: "POST",
+    body: {
+      from: departureCoords.value,
+      to: arrivalCoords.value,
+      mode: "car",
+    },
+  });
+
+  if (data?.value) {
+    routeGeoJSON.value = data.value;
+    console.log("Itinéraire reçu :", routeGeoJSON.value);
+  } else {
+    console.error("Erreur lors de la récupération de l'itinéraire");
+  }
 };
 
 const onArrivalSelected = (coords) => {
